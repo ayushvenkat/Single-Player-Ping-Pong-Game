@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>1 Player Ping Pong</title>
+	<meta charset="utf-8" />
+
+</head>
+<body onload="Welcome();">
+    <canvas id="canvas" width="300px" height="500px" style="background:gray"> </canvas>
+    <script>
+        var positionX = 250;
+        var positionY = 200;
+        var radius = 20;
+        var incrementX = 3;
+        var incrementY = 3;
+        var width = 300
+        var height = 500;
+        var paddleWidth = 100;
+        var paddleHeight = 25;
+        var paddleX = 100;
+        var paddleY = 475;
+        var hits=0;
+        var beginGame;
+        var check = true;
+        var level = 1;
+        var increaseSpeed = 0;
+        var increasePaddle = 0;
+        var increaseHit = 0;
+
+        function Welcome() {
+            var name = prompt("Hi, What is your name?");
+            window.alert("Welcome to 1 player ping pong " + name +"!");
+            window.alert("To move on to the next level, you will have to bounce the ball with the paddle a certain number of times");
+            window.alert("Click OK when you are ready!")
+            startGame();
+        }
+
+        function startGame() {
+            
+            
+
+            var board = document.getElementById("canvas");
+
+            if (check == true && level>1) {
+                board.width += 100;
+                increaseSpeed += 10;
+                increasePaddle += 3;
+                increaseHit += 1;
+            }
+
+            if (check == true && level >= 1) {
+
+                var info = 3 + increaseHit;
+                window.alert("Bounces required for Level " + level + ": " + info);
+            }
+
+            width = board.width;
+
+            paddleWidth = 100;
+
+            hits = 0;
+
+            positionX = 250;
+
+            positionY = 200;
+
+            //createGame();
+
+            if (50 - increaseSpeed <= 0) {
+                increaseSpeed = 40;
+            }
+
+            beginGame=setInterval(createGame,50-increaseSpeed);
+
+            window.addEventListener('keydown', getKey, true);
+            
+        }
+
+        function createGame() {
+           
+            var game = document.getElementById("canvas");
+            var c = game.getContext("2d");
+            c.clearRect(0, 0, game.width, game.height);
+            if (positionX + radius > width || positionX - radius < 0)
+            {
+                incrementX = incrementX * -1;
+            }
+
+            if (positionY - radius < 0)
+            {
+                incrementY = incrementY * -1;
+            }
+            if (positionY - radius > height)
+            {
+                
+                check = false;
+                hits = 0;
+                alert("You missed! Start over again.")
+                clearInterval(beginGame);
+                startGame();
+            }
+            
+            positionX = positionX + incrementX;
+            positionY = positionY + incrementY;
+            c.beginPath();
+            c.arc(positionX, positionY,radius, 0, Math.PI * 2, false)
+            c.stroke();
+            c.fillStyle = "red";
+            c.closePath();
+            c.fill();
+            c.fillStyle = "blue";
+            c.fillRect(paddleX, paddleY, paddleWidth, paddleHeight)
+            c.closePath();
+            collision();
+        }
+
+
+        function collision() {
+            if (positionY + radius >= paddleY && positionX>=paddleX && positionX<paddleX+paddleWidth) {
+                
+                incrementY = incrementY * -1;
+                hits = hits + 1;
+                if(hits==3+increaseHit)
+                {
+                    level = level + 1;
+                    check = true;
+                    alert("Congratulations! Click OK to move on to the next level")
+                    clearInterval(beginGame);
+                    startGame();
+                }
+                
+            }
+
+           
+
+            
+        }
+        function getKey() {
+            switch(event.keyCode)
+            {
+                case 37:
+                    paddleX = paddleX-(10+increasePaddle);
+                    if (paddleX < 0)
+                    {
+                        paddleX = 0;
+                    }
+                    break;
+                case 39:
+                    paddleX =paddleX + (increasePaddle+10);
+                    if (paddleX + paddleWidth > width)
+                    {
+                        paddleX = width - paddleWidth;
+                    }
+                    break;
+            }
+        }
+        
+
+    </script>
+</body>
+</html>
